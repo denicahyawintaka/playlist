@@ -10,7 +10,6 @@ import androidx.lifecycle.ViewModelProviders
 import com.example.playlist.R
 import com.example.playlist.di.component.DaggerPlaylistComponent
 import com.example.playlist.di.module.RoomModule
-import com.example.playlist.main.MainViewEffect
 import com.example.quipper.model.entity.Course
 import com.google.android.exoplayer2.DefaultRenderersFactory
 import com.google.android.exoplayer2.SimpleExoPlayer

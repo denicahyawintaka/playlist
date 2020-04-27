@@ -1,7 +1,5 @@
 package com.example.playlist.detail
 
-import com.example.quipper.model.entity.Course
-
 data class DetailState(
     val isError: Boolean = false,
     val playWhenReady: Boolean = true,

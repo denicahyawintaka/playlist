@@ -1,15 +1,11 @@
 package com.example.playlist.di.module
 
 import android.app.Application
-import android.content.Context
 import androidx.room.Room
 import com.example.playlist.model.dao.CourseDao
 import com.example.playlist.model.database.AppDatabase
-import com.quipper.book.network.ApiService
-import com.quipper.book.network.RetrofitClient
 import dagger.Module
 import dagger.Provides
-import java.security.AccessControlContext
 import javax.inject.Singleton
 
 @Module

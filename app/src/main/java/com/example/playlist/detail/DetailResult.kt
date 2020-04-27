@@ -1,7 +1,5 @@
 package com.example.playlist.detail
 
-import com.example.quipper.model.entity.Course
-
 sealed class DetailResult {
 
     sealed class UpdateStartPositionResult: DetailResult(){

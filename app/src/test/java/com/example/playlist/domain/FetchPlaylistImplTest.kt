@@ -1,17 +1,13 @@
 package com.example.playlist.domain
 
 import com.example.playlist.model.repository.PlaylistRepository
-import com.example.quipper.model.entity.Course
 import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import io.reactivex.Completable
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.Schedulers
-import net.bytebuddy.utility.RandomString
 import org.junit.Before
-
-import org.junit.Assert.*
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
