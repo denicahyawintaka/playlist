@@ -1,5 +1,6 @@
 package com.example.playlist.main
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -9,9 +10,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlist.R
+import com.example.playlist.detail.DetailActivity
 import com.example.playlist.di.component.DaggerPlaylistComponent
 import com.example.playlist.di.module.RoomModule
 import com.example.playlist.utils.MarginItemDecoration
+import com.example.quipper.model.entity.Course
+import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
+import com.uber.autodispose.autoDisposable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
@@ -27,13 +32,15 @@ class MainActivity : AppCompatActivity() {
 
     private val intentSubject : PublishSubject<MainIntent> = PublishSubject.create()
 
+    private val scopeProvider = AndroidLifecycleScopeProvider.from(this)
+
     private lateinit var mainAdapter: MainAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         DaggerPlaylistComponent.builder().roomModule(
             RoomModule(application)
-        ).build().inject(this)
+        ).build().injectMain(this)
         setContentView(R.layout.activity_main)
 
         mainAdapter = MainAdapter()
@@ -45,6 +52,7 @@ class MainActivity : AppCompatActivity() {
         viewModel.getStates()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
+            .autoDisposable(scopeProvider)
             .subscribe({ state ->
                 render(state)
             },{
@@ -54,11 +62,26 @@ class MainActivity : AppCompatActivity() {
         viewModel.getViewEffect()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
+            .autoDisposable(scopeProvider)
             .subscribe({ viewEffect ->
                 renderViewEffect(viewEffect)
             },{
                 Log.e(">>> Error", "error loading activity view state", it)
             })
+
+        mainAdapter.setOnclickListener(object : MainAdapter.OnClickListener{
+            override fun onClick(course: Course) {
+                val intent = Intent(applicationContext, DetailActivity::class.java)
+                intent.putExtra("MainActivity", course)
+                startActivity(intent)
+            }
+
+        })
+
+        swiperefresh.setOnRefreshListener {
+            intentSubject.onNext(MainIntent.RefreshPlaylistIntent)
+            swiperefresh.isRefreshing = false
+        }
     }
 
     override fun onResume() {
@@ -71,7 +94,7 @@ class MainActivity : AppCompatActivity() {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             addItemDecoration(
                 MarginItemDecoration(
-                resources.getDimension(R.dimen.default_padding).toInt())
+                    resources.getDimension(R.dimen.default_padding).toInt())
             )
             adapter = mainAdapter
         }
@@ -91,15 +114,12 @@ class MainActivity : AppCompatActivity() {
         } else if (!state.isLoading && state.playlist.isEmpty() && state.isError) {
             //view effect toast
         } else if (!state.isLoading && state.playlist.isNotEmpty() && state.isError) {
-            Log.d(">> Success", "3")
             progress_circular.visibility = View.INVISIBLE
             mainAdapter.setItems(state.playlist)
         } else if (state.isLoading && state.playlist.isNotEmpty() && state.isError) {
-            Log.d(">> Success", "2")
             progress_circular.visibility = View.INVISIBLE
             mainAdapter.setItems(state.playlist)
         } else if (!state.isLoading && state.playlist.isNotEmpty() && !state.isError) {
-            Log.d(">> Success", "1")
             progress_circular.visibility = View.INVISIBLE
             mainAdapter.setItems(state.playlist)
             // intentSubject.onNext(MainIntent.LoadPopularMovieIntent)

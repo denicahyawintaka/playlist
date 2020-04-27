@@ -8,4 +8,10 @@ sealed class MainResult {
         data class Success(val playlist: List<Course>) : LoadPlaylistResult()
         data class Failed(val error: Throwable) : LoadPlaylistResult()
     }
+
+    sealed class RefreshPlaylistResult: MainResult(){
+        object IsLoading : RefreshPlaylistResult()
+        data class Success(val playlist: List<Course>) : RefreshPlaylistResult()
+        data class Failed(val error: Throwable) : RefreshPlaylistResult()
+    }
 }

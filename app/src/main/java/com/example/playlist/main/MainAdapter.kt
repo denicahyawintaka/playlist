@@ -12,11 +12,22 @@ import kotlinx.android.synthetic.main.item_adapter.view.*
 
 class MainAdapter(private val playlist: MutableList<Course> = mutableListOf()): RecyclerView.Adapter<MainAdapter.PlaylistViewHolder>() {
 
+    lateinit var onClickListener: OnClickListener
+
     fun setItems(newData: List<Course>) {
         playlist.clear()
         playlist.addAll(newData)
         notifyDataSetChanged()
     }
+
+    fun setOnclickListener(onClickListener: OnClickListener){
+        this.onClickListener = onClickListener
+    }
+
+    interface OnClickListener{
+        fun onClick(course: Course)
+    }
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaylistViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_adapter, parent, false)
@@ -27,6 +38,9 @@ class MainAdapter(private val playlist: MutableList<Course> = mutableListOf()): 
 
     override fun onBindViewHolder(holder: PlaylistViewHolder, position: Int) {
         holder.bind(playlist[position])
+        holder.itemView.setOnClickListener {
+            onClickListener.onClick(playlist[position])
+        }
     }
 
     inner class PlaylistViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
@@ -35,7 +49,6 @@ class MainAdapter(private val playlist: MutableList<Course> = mutableListOf()): 
             itemView.presenter.text = course.presenter_name
             Glide.with(itemView.context)
                 .load(course.thumbnail_url)
-
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .into(itemView.imageView)
 

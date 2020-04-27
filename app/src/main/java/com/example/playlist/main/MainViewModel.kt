@@ -5,7 +5,6 @@ import com.example.playlist.domain.FetchPlaylist
 import com.example.playlist.domain.GetPlaylist
 import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
-import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.PublishSubject
 import javax.inject.Inject
 
@@ -13,20 +12,20 @@ class MainViewModel @Inject constructor(fetchPlaylist: FetchPlaylist, getPlaylis
 
     private val intentSubject: PublishSubject<MainIntent> = PublishSubject.create()
     private val viewEffectSubject: PublishSubject<MainViewEffect> = PublishSubject.create()
-    private val compositeDisposable = CompositeDisposable()
 
     private val intentFilter: ObservableTransformer<MainIntent, MainIntent>
         get() = ObservableTransformer{ intentObservable ->
             intentObservable.publish { shared  ->
                 Observable.merge(
                     listOf(
-                        shared.ofType(MainIntent.LoadPlaylistIntent::class.java).take(1)
+                        shared.ofType(MainIntent.LoadPlaylistIntent::class.java).take(1),
+                        shared.ofType(MainIntent.RefreshPlaylistIntent::class.java).take(1)
                     )
                 )
                     .cast(MainIntent::class.java)
                     .mergeWith(
                         shared.filter {
-                            it is MainIntent.LoadPlaylistIntent
+                            it is MainIntent.LoadPlaylistIntent || it is MainIntent.RefreshPlaylistIntent
                         }
                     )
             }
@@ -53,6 +52,9 @@ class MainViewModel @Inject constructor(fetchPlaylist: FetchPlaylist, getPlaylis
             is MainIntent.LoadPlaylistIntent -> {
                 MainAction.LoadPlaylistAction
             }
+            is MainIntent.RefreshPlaylistIntent -> {
+                MainAction.RefreshPlaylistAction
+            }
         }
     }
 
@@ -65,6 +67,15 @@ class MainViewModel @Inject constructor(fetchPlaylist: FetchPlaylist, getPlaylis
                 previousState.copy(isLoading = false, playlist = result.playlist)
             }
             is MainResult.LoadPlaylistResult.Failed -> {
+                previousState.copy(isLoading = false, isError = true)
+            }
+            MainResult.RefreshPlaylistResult.IsLoading -> {
+                previousState.copy(isLoading = true)
+            }
+            is MainResult.RefreshPlaylistResult.Success -> {
+                previousState.copy(isLoading = false, playlist = result.playlist)
+            }
+            is MainResult.RefreshPlaylistResult.Failed -> {
                 previousState.copy(isLoading = false, isError = true)
             }
         }
@@ -86,11 +97,5 @@ class MainViewModel @Inject constructor(fetchPlaylist: FetchPlaylist, getPlaylis
             .distinctUntilChanged()
             .replay(1)
             .autoConnect(0)
-    }
-
-
-    override fun onCleared() {
-        super.onCleared()
-        compositeDisposable.dispose()
     }
 }

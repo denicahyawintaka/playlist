@@ -28,19 +28,42 @@ class MainActionProcessor(private val fetchPlaylist: FetchPlaylist,
             }
         }
 
+    private val refreshPlaylistActionProcessor =
+        ObservableTransformer<MainAction.RefreshPlaylistAction, MainResult.RefreshPlaylistResult> { actions ->
+            actions.flatMap {
+                fetchPlaylist.execute()
+                    .andThen(getPlaylist.execute())
+                    .toObservable()
+                    .map {playlist ->
+                        MainResult.RefreshPlaylistResult.Success(playlist.reversed())
+                    }
+                    .cast(MainResult.RefreshPlaylistResult::class.java)
+                    .startWith(MainResult.RefreshPlaylistResult.IsLoading)
+                    .onErrorReturn(MainResult.RefreshPlaylistResult::Failed)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+            }
+        }
+
     val actionProcessor = ObservableTransformer<MainAction, MainResult> { actions ->
         actions.publish { shared ->
             Observable.merge (
                 listOf(
                     shared.ofType(MainAction.LoadPlaylistAction::class.java).compose(
                         loadPlaylistActionProcessor
+                    ),
+
+                    shared.ofType(MainAction.RefreshPlaylistAction::class.java).compose(
+                        refreshPlaylistActionProcessor
                     )
+
                 )
             )
                 .cast(MainResult::class.java)
                 .mergeWith(
                     shared.filter {
-                        it !is MainAction.LoadPlaylistAction
+                        it !is MainAction.LoadPlaylistAction && it !is MainAction.RefreshPlaylistAction
+
                     }.flatMap {
                         Observable.error<MainResult>(Throwable("wrong intent"))
                     }

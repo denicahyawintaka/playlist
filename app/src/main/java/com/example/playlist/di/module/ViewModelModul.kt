@@ -2,6 +2,7 @@ package com.example.playlist.di.module
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.example.playlist.detail.DetailViewModel
 import com.example.playlist.main.MainViewModel
 import dagger.Binds
 import dagger.MapKey
@@ -32,5 +33,11 @@ abstract class ViewModelModule {
     @Binds
     @IntoMap
     @ViewModelKey(MainViewModel::class)
-    internal abstract fun postListViewModel(viewModel: MainViewModel): ViewModel
+    internal abstract fun postMainViewModel(viewModel: MainViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(DetailViewModel::class)
+    internal abstract fun postDetailViewModel(viewModel: DetailViewModel): ViewModel
+
 }
