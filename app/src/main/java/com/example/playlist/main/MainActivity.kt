@@ -49,6 +49,23 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProviders.of(this, viewModelFactory)[MainViewModel::class.java]
         viewModel.processIntent(intentSubject)
 
+        mainAdapter.setOnclickListener(object : MainAdapter.OnClickListener{
+            override fun onClick(course: Course) {
+                val intent = Intent(applicationContext, DetailActivity::class.java)
+                intent.putExtra("MainActivity", course)
+                startActivity(intent)
+            }
+
+        })
+
+        swiperefresh.setOnRefreshListener {
+            intentSubject.onNext(MainIntent.RefreshPlaylistIntent)
+            swiperefresh.isRefreshing = false
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
         viewModel.getStates()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -68,20 +85,6 @@ class MainActivity : AppCompatActivity() {
             },{
                 Log.e(">>> Error", "error loading activity view state", it)
             })
-
-        mainAdapter.setOnclickListener(object : MainAdapter.OnClickListener{
-            override fun onClick(course: Course) {
-                val intent = Intent(applicationContext, DetailActivity::class.java)
-                intent.putExtra("MainActivity", course)
-                startActivity(intent)
-            }
-
-        })
-
-        swiperefresh.setOnRefreshListener {
-            intentSubject.onNext(MainIntent.RefreshPlaylistIntent)
-            swiperefresh.isRefreshing = false
-        }
     }
 
     override fun onResume() {
