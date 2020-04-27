@@ -1,21 +1,22 @@
 package com.example.playlist.detail
 
 
+import com.example.playlist.domain.UpdateStartPosition
 import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 
-class DetailActionProcessor() {
+
+class DetailActionProcessor(private val updateStartPosition: UpdateStartPosition) {
     private val updateStartPositionActionProcessor =
         ObservableTransformer<DetailAction.UpdateStartPositionAction, DetailResult.UpdateStartPositionResult> { actions ->
             actions.flatMap {
-                Observable.just(DetailResult.UpdateStartPositionResult.Success(it.playWhenReady, it.startWindow, it.startPosition))
-                    .cast(DetailResult.UpdateStartPositionResult::class.java)
-                    .onErrorReturn(DetailResult.UpdateStartPositionResult::Failed)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-            }
+                updateStartPosition.execute(
+                    it.playWhenReady,
+                    it.startWindow,
+                    it.startPosition
+                )
+            }.cast(DetailResult.UpdateStartPositionResult::class.java)
+                .onErrorReturn(DetailResult.UpdateStartPositionResult::Failed)
         }
 
 

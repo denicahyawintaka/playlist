@@ -1,9 +1,6 @@
 package com.example.playlist.di.module
 
-import com.example.playlist.domain.FetchPlaylist
-import com.example.playlist.domain.FetchPlaylistImpl
-import com.example.playlist.domain.GetPlaylist
-import com.example.playlist.domain.GetPlaylistImpl
+import com.example.playlist.domain.*
 import com.example.playlist.model.dao.CourseDao
 import com.example.playlist.model.repository.PlaylistRepository
 import com.example.playlist.model.repository.PlaylistRepositoryImpl
@@ -33,4 +30,10 @@ class PlaylistModule {
     fun provideGetPlaylist(playlistRepository: PlaylistRepository): GetPlaylist{
         return GetPlaylistImpl(playlistRepository)
     }
+
+    @Provides
+    fun provideUpdateStartPosition(): UpdateStartPosition{
+        return UpdateStartPositionImpl()
+    }
+
 }

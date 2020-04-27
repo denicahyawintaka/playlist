@@ -1,12 +1,13 @@
 package com.example.playlist.detail
 
 import androidx.lifecycle.ViewModel
+import com.example.playlist.domain.UpdateStartPosition
 import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
 import io.reactivex.subjects.PublishSubject
 import javax.inject.Inject
 
-class DetailViewModel @Inject constructor() : ViewModel(){
+class DetailViewModel @Inject constructor(updateStartPosition: UpdateStartPosition) : ViewModel(){
 
     private val intentSubject: PublishSubject<DetailIntent> = PublishSubject.create()
     private val viewEffectSubject: PublishSubject<DetailViewEffect> = PublishSubject.create()
@@ -28,7 +29,7 @@ class DetailViewModel @Inject constructor() : ViewModel(){
             }
         }
 
-    private val actionProcessor = DetailActionProcessor()
+    val actionProcessor = DetailActionProcessor(updateStartPosition)
 
     private val stateObservable: Observable<DetailState> = compose()
 

@@ -20,12 +20,12 @@ class MainActionProcessor(private val fetchPlaylist: FetchPlaylist,
                     .map {playlist ->
                         MainResult.LoadPlaylistResult.Success(playlist)
                     }
-                    .cast(MainResult.LoadPlaylistResult::class.java)
-                    .startWith(MainResult.LoadPlaylistResult.IsLoading)
-                    .onErrorReturn(MainResult.LoadPlaylistResult::Failed)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
             }
+                .cast(MainResult.LoadPlaylistResult::class.java)
+                .startWith(MainResult.LoadPlaylistResult.IsLoading)
+                .onErrorReturn(MainResult.LoadPlaylistResult::Failed)
         }
 
     private val refreshPlaylistActionProcessor =
