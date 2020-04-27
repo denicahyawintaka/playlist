@@ -25,13 +25,6 @@ class DetailViewModelTest {
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
-        RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
-        RxJavaPlugins.setComputationSchedulerHandler { Schedulers.trampoline() }
-        RxJavaPlugins.setNewThreadSchedulerHandler { Schedulers.trampoline() }
-
-        RxAndroidPlugins.setInitMainThreadSchedulerHandler { Schedulers.trampoline() }
-        RxAndroidPlugins.setMainThreadSchedulerHandler { Schedulers.trampoline() }
-
         mainViewModel = DetailViewModel(mockUpdateStartPosition)
     }
 
@@ -48,7 +41,7 @@ class DetailViewModelTest {
         )
         mainViewModel.processIntent(Observable.just(DetailIntent.UpdateStartPositionIntent(expectedPlayWhenReady, expectedStarWindow, expectedStarPosition )))
 
-        testObserver.assertValueAt(0) { state ->
+        testObserver.assertValueAt(1) { state ->
             !state.isError && state.playWhenReady == expectedPlayWhenReady && state.startWindow == expectedStarWindow && state.startPosition == expectedStarPosition
         }
     }

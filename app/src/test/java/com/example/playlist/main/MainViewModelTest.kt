@@ -62,11 +62,11 @@ class MainViewModelTest {
 
         mainViewModel.processIntent(Observable.just(MainIntent.LoadPlaylistIntent))
 
-        testObserver.assertValueAt(1) { state ->
+        testObserver.assertValueAt(0) { state ->
             state.isLoading && !state.isError && state.playlist.isEmpty()
         }
 
-        testObserver.assertValueAt(2) { state ->
+        testObserver.assertValueAt(1) { state ->
             !state.isLoading && !state.isError && state.playlist.isNotEmpty()
         }
     }
@@ -97,7 +97,7 @@ class MainViewModelTest {
 
         mainViewModel.processIntent(Observable.just(MainIntent.LoadPlaylistIntent))
 
-        testObserver.assertValueAt(1) { state ->
+        testObserver.assertValueAt(0) { state ->
             state.isLoading && !state.isError && state.playlist.isEmpty()
         }
 
@@ -105,7 +105,7 @@ class MainViewModelTest {
             effect == MainViewEffect.ShowToastError
         }
 
-        testObserver.assertValueAt(2) { state ->
+        testObserver.assertValueAt(1) { state ->
             !state.isLoading && state.isError && state.playlist.isEmpty()
         }
     }
@@ -128,7 +128,7 @@ class MainViewModelTest {
 
         mainViewModel.processIntent(Observable.just(MainIntent.LoadPlaylistIntent))
 
-        testObserver.assertValueAt(1) { state ->
+        testObserver.assertValueAt(0) { state ->
             state.isLoading && !state.isError && state.playlist.isEmpty()
         }
 
@@ -136,7 +136,7 @@ class MainViewModelTest {
             effect == MainViewEffect.ShowToastError
         }
 
-        testObserver.assertValueAt(2) { state ->
+        testObserver.assertValueAt(1) { state ->
             !state.isLoading && state.isError && state.playlist.isEmpty()
         }
     }
@@ -165,11 +165,11 @@ class MainViewModelTest {
 
         mainViewModel.processIntent(Observable.just(MainIntent.LoadPlaylistIntent))
 
-        testObserver.assertValueAt(1) { state ->
+        testObserver.assertValueAt(0) { state ->
             state.isLoading && !state.isError && state.playlist.isEmpty()
         }
 
-        testObserver.assertValueAt(2) { state ->
+        testObserver.assertValueAt(1) { state ->
             !state.isLoading && !state.isError && state.playlist.isNotEmpty()
         }
     }
@@ -200,7 +200,7 @@ class MainViewModelTest {
 
         mainViewModel.processIntent(Observable.just(MainIntent.LoadPlaylistIntent))
 
-        testObserver.assertValueAt(1) { state ->
+        testObserver.assertValueAt(0) { state ->
             state.isLoading && !state.isError && state.playlist.isEmpty()
         }
 
@@ -208,7 +208,7 @@ class MainViewModelTest {
             effect == MainViewEffect.ShowToastError
         }
 
-        testObserver.assertValueAt(2) { state ->
+        testObserver.assertValueAt(1) { state ->
             !state.isLoading && state.isError && state.playlist.isEmpty()
         }
     }
@@ -231,7 +231,7 @@ class MainViewModelTest {
 
         mainViewModel.processIntent(Observable.just(MainIntent.LoadPlaylistIntent))
 
-        testObserver.assertValueAt(1) { state ->
+        testObserver.assertValueAt(0) { state ->
             state.isLoading && !state.isError && state.playlist.isEmpty()
         }
 
@@ -239,7 +239,7 @@ class MainViewModelTest {
             effect == MainViewEffect.ShowToastError
         }
 
-        testObserver.assertValueAt(2) { state ->
+        testObserver.assertValueAt(1) { state ->
             !state.isLoading && state.isError && state.playlist.isEmpty()
         }
     }

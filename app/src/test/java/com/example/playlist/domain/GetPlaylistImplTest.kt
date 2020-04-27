@@ -20,10 +20,6 @@ class GetPlaylistImplTest {
 
     @Before
     fun setUp() {
-        RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
-        RxJavaPlugins.setComputationSchedulerHandler { Schedulers.trampoline() }
-        RxJavaPlugins.setNewThreadSchedulerHandler { Schedulers.trampoline() }
-
         MockitoAnnotations.initMocks(this)
         getPlaylist = GetPlaylistImpl(mockedPlaylistRepository)
     }

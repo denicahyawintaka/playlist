@@ -28,10 +28,6 @@ class PlaylistRepositoryImplTest{
 
     @Before
     fun setUP(){
-        RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
-        RxJavaPlugins.setComputationSchedulerHandler { Schedulers.trampoline() }
-        RxJavaPlugins.setNewThreadSchedulerHandler { Schedulers.trampoline() }
-
         MockitoAnnotations.initMocks(this)
         playlistRepository = PlaylistRepositoryImpl(mockedApiService, mockedCourseDao)
     }
